@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Update extends Model
 {
-    protected $fillable = ['campaign_id', 'content'];
+    use HasFactory;
+
+    protected $fillable = ['campaign_id', 'title', 'content', 'image'];
 
     public function campaign()
     {

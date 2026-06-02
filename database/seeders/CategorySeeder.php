@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-
-namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use App\Models\Category; // <--- AJOUTE CETTE LIGNE
 

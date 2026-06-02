@@ -49,6 +49,11 @@
 
             </div>
 
+            <div style="margin-top:30px;">
+                <h3>Progression temps réel</h3>
+                <livewire:campaign-progress campaign-id="1" />
+            </div>
+
         </div>
 
     </div>

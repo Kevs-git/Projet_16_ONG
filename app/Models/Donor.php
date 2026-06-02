@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Donor extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['name', 'email'];
 
-    public function initialize()
+    public function donations()
     {
-        Schema::create('donors', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamps();
-        });
+        return $this->hasMany(Donation::class);
     }
 }
