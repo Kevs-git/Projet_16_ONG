@@ -1,0 +1,275 @@
+{
+  "info": {
+    "name": "ONG Platform API - Binôme 16",
+    "description": "Collection complète pour tester l'API de la plateforme de dons",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Donor\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register FCM Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcm_token\": \"android_fcm_token_here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/fcm-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fcm-token"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campaigns",
+      "item": [
+        {
+          "name": "List All Campaigns",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns"]
+            }
+          }
+        },
+        {
+          "name": "Get Campaign Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Secours aux sinistrés\",\n  \"description\": \"Aide d'urgence aux familles affectées\",\n  \"category\": \"Urgence\",\n  \"image_url\": \"https://example.com/image.jpg\",\n  \"montant_objectif\": 50000,\n  \"is_urgent\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/campaigns",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campaign Updates",
+      "item": [
+        {
+          "name": "List Campaign Updates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/1/updates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "1", "updates"]
+            }
+          }
+        },
+        {
+          "name": "Create Campaign Update (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mise à jour de la collecte\",\n  \"content\": \"Nous avons atteint 50% de l'objectif! Merci pour votre générosité.\",\n  \"image\": \"https://example.com/update-image.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/1/updates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "1", "updates"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments & Donations",
+      "item": [
+        {
+          "name": "1. Create Payment Intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaign_id\": 1,\n  \"amount\": 10000,\n  \"is_recurring\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/stripe/payment-intent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "stripe", "payment-intent"]
+            }
+          }
+        },
+        {
+          "name": "2. Create Donation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaign_id\": 1,\n  \"amount\": 10000,\n  \"stripe_payment_id\": \"pi_xxxxxxxxxxxxxxxxxx\",\n  \"is_recurring\": false\n}\n\nNote: stripe_payment_id comes from PaymentIntent response"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "donations"]
+            }
+          }
+        },
+        {
+          "name": "List My Donations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/donations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "donations"]
+            }
+          }
+        },
+        {
+          "name": "Download Receipt PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/donations/1/receipt",
+              "host": ["{{base_url}}"],
+              "path": ["donations", "1", "receipt"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "admin_token",
+      "value": ""
+    }
+  ]
+}

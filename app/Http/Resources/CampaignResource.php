@@ -11,19 +11,20 @@ class CampaignResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $categoryName = $this->getRawOriginal('category')
+            ?? ($this->resource->relationLoaded('category') ? $this->resource->getRelation('category')?->name : null);
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'goal_amount' => $this->goal_amount,
-            'collected_amount' => $this->collected_amount,
-            'image' => $this->image,
-            'category' => [
-                'id' => $this->category?->id,
-                'name' => $this->category?->name,
-            ],
+            'category' => $categoryName,
+            'image_url' => $this->image_url ?? $this->image,
+            'montant_collecte' => (int) ($this->montant_collecte ?? $this->collected_amount ?? 0),
+            'montant_objectif' => (int) ($this->montant_objectif ?? $this->goal_amount ?? 0),
             'progress_percentage' => $this->progress_percentage,
             'unique_donor_count' => $this->unique_donor_count,
+            'is_urgent' => (bool) $this->is_urgent,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

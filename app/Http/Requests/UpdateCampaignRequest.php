@@ -22,10 +22,15 @@ class UpdateCampaignRequest extends FormRequest
         return [
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
+            'category' => 'sometimes|nullable|string|max:255',
+            'image_url' => 'sometimes|nullable|string|max:255',
+            'montant_collecte' => 'sometimes|integer|min:0',
+            'montant_objectif' => 'sometimes|integer|min:0',
             'goal_amount' => 'sometimes|required|numeric|min:0',
             'collected_amount' => 'sometimes|numeric|min:0',
             'image' => 'sometimes|nullable|string|max:255',
-            'category_id' => 'sometimes|required|exists:categories,id',
+            'category_id' => 'sometimes|nullable|exists:categories,id',
+            'is_urgent' => 'sometimes|boolean',
         ];
     }
 }

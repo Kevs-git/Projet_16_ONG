@@ -13,7 +13,9 @@ class UpdateController extends Controller
 {
     public function index(Campaign $campaign)
     {
-        return UpdateResource::collection($campaign->updates()->latest()->get());
+        return response()->json([
+            'data' => UpdateResource::collection($campaign->updates()->latest()->get()),
+        ]);
     }
 
     public function show(Campaign $campaign, Update $update)
@@ -22,16 +24,22 @@ class UpdateController extends Controller
             return response()->json(['message' => 'Update not found for this campaign'], 404);
         }
 
-        return new UpdateResource($update);
+        return response()->json([
+            'data' => new UpdateResource($update),
+        ]);
     }
 
     public function store(StoreUpdateRequest $request, Campaign $campaign)
     {
+        abort_unless($request->user()?->isAdmin(), 403, 'Only admins can create campaign updates.');
+
         $update = Update::create(array_merge($request->validated(), [
             'campaign_id' => $campaign->id,
         ]));
 
-        return new UpdateResource($update);
+        return response()->json([
+            'data' => new UpdateResource($update),
+        ], 201);
     }
 
     public function update(UpdateUpdateRequest $request, Campaign $campaign, Update $update)
@@ -42,7 +50,9 @@ class UpdateController extends Controller
 
         $update->update($request->validated());
 
-        return new UpdateResource($update);
+        return response()->json([
+            'data' => new UpdateResource($update),
+        ]);
     }
 
     public function destroy(Campaign $campaign, Update $update)

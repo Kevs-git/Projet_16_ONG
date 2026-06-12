@@ -9,7 +9,7 @@ it('registers and logs in an API user with valid credentials', function () {
         'password' => 'password123',
     ]);
 
-    $registerResponse->assertStatus(200)
+    $registerResponse->assertStatus(201)
         ->assertJsonPath('email', 'api@example.com');
 
     $loginResponse = $this->postJson('/api/login', [

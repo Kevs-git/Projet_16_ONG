@@ -16,4 +16,3 @@ class Update extends Model
         return $this->belongsTo(Campaign::class);
     }
 }
-

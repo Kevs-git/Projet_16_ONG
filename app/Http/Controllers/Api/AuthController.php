@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,10 +19,20 @@ class AuthController extends Controller
         ]);
 
         $validated['password'] = bcrypt($validated['password']);
+        // Default role for registrations via API is 'donor'
+        $validated['role'] = $validated['role'] ?? 'donor';
 
         $user = User::create($validated);
 
-        return response()->json($user, 201);
+        return response()->json([
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'token' => $user->createToken('api-token')->plainTextToken,
+                'user' => new UserResource($user),
+            ],
+        ], 201);
     }
 
     public function login(Request $request)
@@ -42,8 +53,10 @@ class AuthController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'token' => $token,
-            'user' => $user,
+            'data' => [
+                'token' => $token,
+                'user' => new UserResource($user),
+            ],
         ]);
     }
 
@@ -52,8 +65,25 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Logged out',
+            'data' => [
+                'message' => 'Logged out',
+            ],
+        ]);
+    }
+
+    public function updateFcmToken(Request $request)
+    {
+        $validated = $request->validate([
+            'fcm_token' => 'required|string',
+        ]);
+
+        $request->user()->update($validated);
+
+        return response()->json([
+            'data' => [
+                'message' => 'FCM token updated',
+                'user' => new UserResource($request->user()->fresh()),
+            ],
         ]);
     }
 }
-

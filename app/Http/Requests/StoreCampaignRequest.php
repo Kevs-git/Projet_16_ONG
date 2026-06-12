@@ -22,10 +22,15 @@ class StoreCampaignRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'goal_amount' => 'required|numeric|min:0',
+            'category' => 'nullable|string|max:255',
+            'image_url' => 'nullable|string|max:255',
+            'montant_collecte' => 'nullable|integer|min:0',
+            'montant_objectif' => 'nullable|integer|min:0',
+            'goal_amount' => 'nullable|numeric|min:0',
             'collected_amount' => 'nullable|numeric|min:0',
             'image' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'is_urgent' => 'sometimes|boolean',
         ];
     }
 }

@@ -26,6 +26,7 @@ class DonationThankYouMail extends Mailable
                 'donorName' => $this->donation->donor?->name,
                 'campaignTitle' => $this->donation->campaign?->title,
                 'amount' => $this->donation->amount,
+                'receiptNumber' => $this->donation->receipt_number,
             ]);
     }
 }

@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: ONG API
+  version: '1.0'
+  description: API minimal pour l'application Kotlin
+servers:
+  - url: https://api.example.com
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /api/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Created
+
+  /api/login:
+    post:
+      summary: Login and obtain token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/campaigns:
+    get:
+      summary: List campaigns
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create campaign (auth)
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Created
+
+  /api/donations:
+    post:
+      summary: Create donation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_id:
+                  type: integer
+                donor_name:
+                  type: string
+                donor_email:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        '201':
+          description: Created
+
+  /api/admin/financial-report:
+    get:
+      summary: Download financial report (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: string
+        - in: query
+          name: to
+          schema:
+            type: string
+      responses:
+        '200':
+          description: XLSX download
+        '403':
+          description: Forbidden
+
+  /api/stripe/webhook:
+    post:
+      summary: Stripe webhook endpoint
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Received
+
+security:
+  - bearerAuth: []

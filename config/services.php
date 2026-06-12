@@ -37,7 +37,15 @@ return [
 
     'stripe' => [
         'key' => env('STRIPE_KEY'),
+        'public' => env('STRIPE_PUBLIC_KEY'),
         'secret' => env('STRIPE_SECRET'),
+        'currency' => env('STRIPE_CURRENCY', 'eur'),
+        'monthly_price_id' => env('STRIPE_MONTHLY_PRICE_ID'),
+    ],
+
+    'firebase' => [
+        'server_key' => env('FIREBASE_SERVER_KEY'),
+        'api_key' => env('FIREBASE_API_KEY'),
     ],
 
 ];

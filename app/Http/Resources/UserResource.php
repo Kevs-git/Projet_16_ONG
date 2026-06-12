@@ -4,15 +4,16 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UpdateResource extends JsonResource
+class UserResource extends JsonResource
 {
     public function toArray($request): array
     {
         return [
             'id' => $this->id,
-            'campaign_id' => $this->campaign_id,
-            'title' => $this->title,
-            'content' => $this->content,
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+            'fcm_token' => $this->fcm_token,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

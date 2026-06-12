@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UrgentCampaignMail;
 use App\Http\Requests\StoreCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
 use App\Http\Resources\CampaignResource;
+use App\Models\Category;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CampaignController extends Controller
 {
@@ -16,7 +19,9 @@ class CampaignController extends Controller
      */
     public function index()
     {
-        return CampaignResource::collection(Campaign::with('category')->get());
+        return response()->json([
+            'data' => CampaignResource::collection(Campaign::with('category')->get()),
+        ]);
     }
 
     /**
@@ -24,7 +29,9 @@ class CampaignController extends Controller
      */
     public function show(Campaign $campaign)
     {
-        return new CampaignResource($campaign->load('category'));
+        return response()->json([
+            'data' => new CampaignResource($campaign->load('category')),
+        ]);
     }
 
     /**
@@ -32,9 +39,16 @@ class CampaignController extends Controller
      */
     public function store(StoreCampaignRequest $request)
     {
-        $campaign = Campaign::create($request->validated());
+        $data = $this->normalizeCampaignPayload($request->validated());
+        $campaign = Campaign::create($data);
 
-        return new CampaignResource($campaign->load('category'));
+        if ($campaign->is_urgent) {
+            $this->notifyDonorsOfUrgentCampaign($campaign);
+        }
+
+        return response()->json([
+            'data' => new CampaignResource($campaign->load('category')),
+        ], 201);
     }
 
     /**
@@ -42,9 +56,61 @@ class CampaignController extends Controller
      */
     public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
-        $campaign->update($request->validated());
+        $wasUrgent = $campaign->is_urgent;
+        $campaign->update($this->normalizeCampaignPayload($request->validated(), false));
 
-        return new CampaignResource($campaign->load('category'));
+        if ($campaign->is_urgent && ! $wasUrgent) {
+            $this->notifyDonorsOfUrgentCampaign($campaign);
+        }
+
+        return response()->json([
+            'data' => new CampaignResource($campaign->load('category')),
+        ]);
+    }
+
+    protected function notifyDonorsOfUrgentCampaign(Campaign $campaign): void
+    {
+        $donorEmails = $campaign->donations()
+            ->with('donor')
+            ->get()
+            ->map(fn ($donation) => $donation->donor?->email)
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+
+
+        if (empty($donorEmails)) {
+            return;
+        }
+
+        Mail::to($donorEmails)->send(new UrgentCampaignMail($campaign));
+    }
+
+    protected function normalizeCampaignPayload(array $data, bool $creating = true): array
+    {
+        if (array_key_exists('montant_objectif', $data)) {
+            $data['goal_amount'] = $data['montant_objectif'];
+        } elseif ($creating && ! array_key_exists('goal_amount', $data)) {
+            $data['goal_amount'] = 0;
+        }
+
+        if (array_key_exists('montant_collecte', $data)) {
+            $data['collected_amount'] = $data['montant_collecte'];
+        } elseif ($creating && ! array_key_exists('collected_amount', $data)) {
+            $data['collected_amount'] = 0;
+        }
+
+        if (array_key_exists('image_url', $data)) {
+            $data['image'] = $data['image_url'];
+        }
+
+        if ($creating && ! array_key_exists('category_id', $data)) {
+            $categoryName = $data['category'] ?? 'General';
+            $data['category_id'] = Category::firstOrCreate(['name' => $categoryName])->id;
+        }
+
+        return $data;
     }
 
     /**

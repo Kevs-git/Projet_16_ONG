@@ -7,7 +7,10 @@
 <body>
     <h1>Merci, {{ $donorName }} !</h1>
     <p>Nous avons bien reçu votre don pour la campagne : <strong>{{ $campaignTitle }}</strong>.</p>
-    <p>Montant : <strong>${{ number_format($amount, 2) }}</strong></p>
+    <p>Montant : <strong>{{ number_format($amount, 2, ',', ' ') }} €</strong></p>
+    @if (! empty($receiptNumber))
+        <p>Numéro de reçu fiscal : <strong>{{ $receiptNumber }}</strong></p>
+    @endif
     <p>Votre soutien fait une grande différence. Merci pour votre générosité.</p>
 </body>
 </html>
